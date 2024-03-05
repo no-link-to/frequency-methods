@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 
+
 class Fourier:
     __N = 0
     __period_start = 0
@@ -48,7 +49,7 @@ class Fourier:
                                      integrate.quad(lambda t: 5, self.__period, self.__period_end)[0])
         result_a = [round(a_0, 3)]
         result_b = []
-        result_c = [dict(re=round(a_0, 3) / 2, im=0)]
+        result_c = [round(a_0, 3) / 2]
         for i in range(1, self.__N + 1):
             a_n = (2 / self.__period) * (integrate.quad(lambda t: 4 * np.cos(2 * np.pi * i * t / self.__period),
                                                         self.__period_start, self.__period)[0] +
@@ -60,8 +61,8 @@ class Fourier:
                                                         self.__period, self.__period_end)[0])
             result_a.append(round(a_n, 3))
             result_b.append(round(b_n, 3))
-            result_c.insert(0, dict(re=round(a_n, 3) / 2, im=round(b_n, 3) / 2))
-            result_c.append(dict(re=round(a_n, 3) / 2, im=-round(b_n, 3) / 2))
+            result_c.insert(0, round(a_n, 3) / 2 + round(b_n, 3) / 2 * 1j)
+            result_c.append(round(a_n, 3) / 2 - round(b_n, 3) / 2 * 1j)
         self.__coefficients_a = result_a
         self.__coefficients_b = result_b
         self.__coefficients_c = result_c
@@ -70,7 +71,7 @@ class Fourier:
         a_0 = (2 / self.__period) * integrate.quad(lambda t: self.__get_func()(t), self.__period_start, self.__period_end)[0]
         result_a = [round(a_0, 3)]
         result_b = []
-        result_c = [dict(re=round(a_0, 3) / 2, im=0)]
+        result_c = [round(a_0, 3) / 2]
         for i in range(1, self.__N + 1):
             a_n = (2 / self.__period) * integrate.quad(lambda t: self.__get_func()(t) * np.cos(2 * np.pi * i * t / self.__period),
                                                        self.__period_start, self.__period_end)[0]
@@ -78,8 +79,8 @@ class Fourier:
                                                        self.__period_start, self.__period_end)[0]
             result_a.append(round(a_n, 3))
             result_b.append(round(b_n, 3))
-            result_c.insert(0, dict(re=round(a_n, 3) / 2, im=round(b_n, 3) / 2))
-            result_c.append(dict(re=round(a_n, 3) / 2, im=-round(b_n, 3) / 2))
+            result_c.insert(0, round(a_n, 3) / 2 + round(b_n, 3) / 2 * 1j)
+            result_c.append(round(a_n, 3) / 2 - round(b_n, 3) / 2 * 1j)
         self.__coefficients_a = result_a
         self.__coefficients_b = result_b
         self.__coefficients_c = result_c
@@ -97,8 +98,7 @@ class Fourier:
         tmp_c = [*self.__coefficients_c]
         result = 0
         for i in range(-self.__N, self.__N + 1):
-            tmp = complex(tmp_c[i + self.__N]['re'], tmp_c[i + self.__N]['im'])
-            result += tmp * np.exp(1j * 2 * np.pi * i * t / self.__period)
+            result += tmp_c[i + self.__N] * np.exp(1j * 2 * np.pi * i * t / self.__period)
         return result
 
     def __check_parseval(self):
@@ -107,10 +107,10 @@ class Fourier:
                     sum(b ** 2 for b in self.__coefficients_b))
         func = (2 / self.__period) * integrate.quad(lambda t: self.__get_func()(t) * self.__get_func()(t),
                                                     self.__period_start, self.__period_end)[0]
-        parseval_complex = 2 * sum(c['re']**2 + c['im']**2 for c in self.__coefficients_c)
+        parseval_complex = 2 * sum(c.real**2 + c.imag**2 for c in self.__coefficients_c)
         print(f"Сумма {parseval} квадрат нормы {func} равны "
               f"с погрешностью 0.1: {np.isclose(parseval, func, atol=1e-1)}")
-        print(f"Сумма (комплексный случай) {parseval} квадрат нормы {func} равны "
+        print(f"Сумма (комплексный случай) {parseval_complex} квадрат нормы {func} равны "
               f"с погрешностью 0.1: {np.isclose(parseval_complex, func, atol=1e-1)}")
 
     def __draw(self):
@@ -127,7 +127,7 @@ class Fourier:
     def __display_coefficients(self):
         print(f"An: {self.__coefficients_a}")
         print(f"Bn: {self.__coefficients_b}")
-        print(f"Cn: {[complex(item["re"], item["im"]) for item in self.__coefficients_c]}")
+        print(f"Cn: {self.__coefficients_c}")
         self.__check_parseval()
 
     def run(self):
@@ -141,14 +141,14 @@ class Fourier:
 if __name__ == '__main__':
     # example = Fourier(3, 5, 15, 1)
     # example = Fourier(10, 5, 15, 1)
-    example = Fourier(20, 5, 15, 1)
+    # example = Fourier(20, 5, 15, 1)
     # example = Fourier(30, 5, 15, 1)
     # example = Fourier(40, 5, 15, 1)
 
     # example = Fourier(3, -np.pi, np.pi, 2)
     # example = Fourier(10, -np.pi, np.pi, 2)
     # example = Fourier(20, -np.pi, np.pi, 2)
-    # example = Fourier(30, -np.pi, np.pi, 2)
+    example = Fourier(30, -np.pi, np.pi, 2)
     # example = Fourier(40, -np.pi, np.pi, 2)
 
     # example = Fourier(3, 0, np.pi, 3)

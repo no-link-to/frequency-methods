@@ -51,9 +51,9 @@ class FourierComplex:
     def __draw(self):
         plt.figure(figsize=(10, 6))
         plt.plot([t.real for t in self.__ft_list if t],
-                 [t.imag for t in self.__ft_list if t])
+                 [t.imag for t in self.__ft_list if t], label='f(t)')
         plt.plot([item.real for item in self.__complex_sum if item],
-                 [item.imag for item in self.__complex_sum if item])
+                 [item.imag for item in self.__complex_sum if item], label='Gn(t)')
         plt.xlabel('Re')
         plt.ylabel('Im')
         plt.legend()
@@ -64,8 +64,8 @@ class FourierComplex:
         plt.figure(figsize=(10, 6))
         real_ft = [t.real for t in self.__ft_list if t]
         real_sum = [item.real for item in self.__complex_sum]
-        plt.plot(self.__t_list[:len(real_ft)], real_ft)
-        plt.plot(self.__t_list[:len(real_sum)], real_sum)
+        plt.plot(self.__t_list[:len(real_ft)], real_ft, label='Re f(t)')
+        plt.plot(self.__t_list[:len(real_sum)], real_sum, label='Re Gn(t)')
         plt.xlabel('Re')
         plt.ylabel('Im')
         plt.legend()
@@ -76,8 +76,8 @@ class FourierComplex:
         plt.figure(figsize=(10, 6))
         imag_ft = [t.imag for t in self.__ft_list if t]
         imag_sum = [item.imag for item in self.__complex_sum]
-        plt.plot(self.__t_list[:len(imag_ft)], imag_ft)
-        plt.plot(self.__t_list[:len(imag_sum)], imag_sum)
+        plt.plot(self.__t_list[:len(imag_ft)], imag_ft, label='Im f(t)')
+        plt.plot(self.__t_list[:len(imag_sum)], imag_sum, label='Im Gn(t)')
         plt.xlabel('Re')
         plt.ylabel('Im')
         plt.legend()
@@ -90,8 +90,7 @@ class FourierComplex:
 
         parseval_complex = sum(c.real**2 + c.imag**2 for c in self.__coefficients_c)
 
-        print(f"Сумма (комплексный случай) {parseval_complex} квадрат нормы {func} равны "
-              f"с погрешностью 0.1: {np.isclose(parseval_complex, func, atol=(1e-1 + 1j))}")
+        print(f"Равенство Парсеваля: {np.isclose(parseval_complex, func, atol=(1e-1 + 1j))}")
 
     def __display_coefficients(self):
         print(f"Cn: {self.__coefficients_c}")
@@ -111,6 +110,6 @@ class FourierComplex:
 if __name__ == "__main__":
     # example = FourierComplex(1)
     # example = FourierComplex(2)
-    # example = FourierComplex(3)
-    example = FourierComplex(10)
+    example = FourierComplex(3)
+    # example = FourierComplex(10)
     example.run()
